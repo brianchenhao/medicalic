@@ -1,5 +1,6 @@
 from .database import SessionLocal, Base, engine
 from . import models
+from .auth_utils import hash_password
 
 Base.metadata.create_all(bind=engine)
 
@@ -11,7 +12,7 @@ def seed():
             db.add(models.Patient(
                 name="Jane Doe",
                 email="jane@example.com",
-                password_hash="dev",
+                password_hash=hash_password("demo1234"),
                 avatar_url="https://i.pravatar.cc/150?img=47",
                 location="San Francisco, CA",
             ))
