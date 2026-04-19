@@ -5,6 +5,8 @@ import '../models/health_metric.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/metric_card.dart';
+import 'doctor_list_screen.dart';
+import 'doctor_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,7 +71,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _Header(name: 'Jane'),
                   const SizedBox(height: 16),
-                  _FeaturedDoctorCard(doctor: d.featured),
+                  _FeaturedDoctorCard(
+                    doctor: d.featured,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => DoctorDetailScreen(doctor: d.featured)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(46),
+                        backgroundColor: AppTheme.primaryBlue,
+                      ),
+                      icon: const Icon(Icons.search),
+                      label: const Text('Find a doctor'),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const DoctorListScreen()),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   const Text('Health Metrics',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
@@ -142,10 +164,14 @@ class _Header extends StatelessWidget {
 
 class _FeaturedDoctorCard extends StatelessWidget {
   final Doctor doctor;
-  const _FeaturedDoctorCard({required this.doctor});
+  final VoidCallback? onTap;
+  const _FeaturedDoctorCard({required this.doctor, this.onTap});
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Card(
       color: AppTheme.darkCard,
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -190,6 +216,7 @@ class _FeaturedDoctorCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
