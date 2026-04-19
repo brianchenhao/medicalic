@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/appointment.dart';
 import '../models/doctor.dart';
+import '../models/reminder.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/calendar_widget.dart';
@@ -17,6 +18,7 @@ class DoctorDetailScreen extends StatefulWidget {
 class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
   DateTime? _selected;
   Set<DateTime> _booked = {};
+  List<Reminder> _reminders = [];
   bool _loadingBooked = true;
   bool _submitting = false;
 
@@ -30,6 +32,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     final api = context.read<ApiService>();
     try {
       final list = await api.getJson('/appointments/${api.patientId}');
+      final rems = await api.getJson('/reminders/${api.patientId}');
       final appts = (list as List).map((e) => Appointment.fromJson(e)).toList();
       setState(() {
         _booked = appts
@@ -38,6 +41,10 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
           final parts = a.date.split('-');
           return DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
         }).toSet();
+        _reminders = (rems as List)
+            .map((e) => Reminder.fromJson(e))
+            .where((r) => r.title.contains(widget.doctor.name))
+            .toList();
         _loadingBooked = false;
       });
     } catch (_) {
@@ -151,6 +158,24 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               bookedDates: _booked,
               onSelect: (d) => setState(() => _selected = d),
             ),
+          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          const Text('Doctor Reminders',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 10),
+          if (_reminders.isEmpty)
+            const Text('No reminders for this doctor yet',
+                style: TextStyle(color: AppTheme.textMuted))
+          else
+            for (final r in _reminders)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.notifications_active_outlined, color: AppTheme.primaryBlue),
+                  title: Text(r.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text('${r.remindAt.year}-${r.remindAt.month.toString().padLeft(2, '0')}-${r.remindAt.day.toString().padLeft(2, '0')} '
+                      '${r.remindAt.hour.toString().padLeft(2, '0')}:${r.remindAt.minute.toString().padLeft(2, '0')}'),
+                ),
+              ),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _selected == null || _submitting ? null : _confirmBook,

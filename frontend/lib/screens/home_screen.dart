@@ -124,6 +124,55 @@ class _HomeScreenState extends State<HomeScreen> {
       chartValues: chart.values,
       accent: color,
       icon: icon,
+      onViewDetails: () => _showMetricDetails(title, chart.values, m.unit, color),
+    );
+  }
+
+  void _showMetricDetails(String title, List<double> values, String unit, Color accent) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.timeline_rounded, color: accent),
+                const SizedBox(width: 8),
+                Text('$title history',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text('Last ${values.length} readings',
+                style: const TextStyle(color: AppTheme.textMuted, fontSize: 12)),
+            const SizedBox(height: 16),
+            for (var i = 0; i < values.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8, height: 8,
+                      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 10),
+                    Text('Reading ${i + 1}'),
+                    const Spacer(),
+                    Text('${values[i].toStringAsFixed(2)} $unit',
+                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 }

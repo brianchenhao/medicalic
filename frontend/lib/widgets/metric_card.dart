@@ -9,6 +9,7 @@ class MetricCard extends StatelessWidget {
   final List<double> chartValues;
   final Color accent;
   final IconData icon;
+  final VoidCallback? onViewDetails;
 
   const MetricCard({
     super.key,
@@ -18,6 +19,7 @@ class MetricCard extends StatelessWidget {
     required this.chartValues,
     this.accent = AppTheme.primaryBlue,
     this.icon = Icons.favorite_rounded,
+    this.onViewDetails,
   });
 
   @override
@@ -41,8 +43,15 @@ class MetricCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
                 const Spacer(),
-                const Text('View Details',
-                    style: TextStyle(color: AppTheme.textMuted, fontSize: 12)),
+                GestureDetector(
+                  onTap: onViewDetails,
+                  child: Text('View Details',
+                      style: TextStyle(
+                        color: onViewDetails == null ? AppTheme.textMuted : accent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      )),
+                ),
               ],
             ),
             const SizedBox(height: 14),
