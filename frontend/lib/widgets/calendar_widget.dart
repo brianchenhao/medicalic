@@ -52,6 +52,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       final isPast = date.isBefore(today);
       cells.add(
         GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: isPast ? null : () => widget.onSelect(date),
           child: Container(
             margin: const EdgeInsets.all(3),
