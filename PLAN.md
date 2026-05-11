@@ -301,3 +301,5 @@ When patient opens doctor detail screen:
 - If a widget looks 80% right, move on — pixel-perfection is a Phase 6 task
 - Keep one terminal for `uvicorn`, one for `flutter run` — never mix
 - If stuck on a chart library for more than 10 min, use fl_chart and move on
+
+<!-- test -->
